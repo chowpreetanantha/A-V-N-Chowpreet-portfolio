@@ -141,3 +141,33 @@ h2 { font: 500 clamp(2.25rem, 4.2vw, 3.65rem)/1.12 var(--display); letter-spacin
   .site-footer { flex-wrap: wrap; padding-top: 22px; padding-bottom: 22px; }.site-footer>span { order: 3; width: 100%; }.back-top { margin-left: auto; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+
+
+/* Portfolio personalization: rectangular portrait */
+.portrait-frame {
+  border-radius: 2px !important;
+  overflow: hidden;
+}
+
+.portrait-frame img {
+  border-radius: 0 !important;
+}
+
+/* Display the owner's name prominently on the homepage */
+.hero-copy h1::before {
+  content: "A V N CHOWPREET";
+  display: block;
+  margin: 0 0 22px;
+  color: var(--gold);
+  font: 700 clamp(.9rem, 1.4vw, 1.08rem)/1.3 var(--mono);
+  letter-spacing: .16em;
+}
+
+@media (max-width: 680px) {
+  .hero-copy h1::before {
+    font-size: .82rem;
+    letter-spacing: .12em;
+    margin-bottom: 18px;
+  }
+}
+
