@@ -287,3 +287,48 @@
 
   updatePagePosition();
 })();
+
+
+/* === Active navigation highlight fix === */
+(() => {
+  const links = [
+    ...document.querySelectorAll('.nav-links a[href^="#"]')
+  ];
+
+  const sections = links
+    .map(link => ({
+      link,
+      section: document.getElementById(
+        link.getAttribute("href").slice(1)
+      )
+    }))
+    .filter(item => item.section);
+
+  function updateActiveLink() {
+    let current = null;
+
+    sections.forEach(item => {
+      if (item.section.getBoundingClientRect().top <= 160) {
+        current = item;
+      }
+    });
+
+    links.forEach(link => {
+      link.classList.remove("is-active");
+      link.removeAttribute("aria-current");
+    });
+
+    if (current) {
+      current.link.classList.add("is-active");
+      current.link.setAttribute("aria-current", "location");
+    }
+  }
+
+  window.addEventListener("scroll", updateActiveLink, {
+    passive: true
+  });
+
+  window.addEventListener("resize", updateActiveLink);
+  updateActiveLink();
+})();
+
