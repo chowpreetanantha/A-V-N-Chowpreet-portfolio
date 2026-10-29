@@ -326,3 +326,19 @@ h2 { font: 500 clamp(2.25rem, 4.2vw, 3.65rem)/1.12 var(--display); letter-spacin
     opacity: 1;
   }
 }
+
+
+/* === Reading progress indicator === */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--scroll-progress, 0%);
+  height: 3px;
+  background: var(--gold);
+  z-index: 1000;
+  pointer-events: none;
+  transition: width 0.08s linear;
+}
+
