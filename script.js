@@ -77,3 +77,160 @@
     toggle?.setAttribute("aria-expanded", "false");
   }));
 })();
+
+/* === Interactive portfolio upgrade === */
+(() => {
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  /* 1. Reveal content as visitors scroll */
+  const revealItems = document.querySelectorAll(
+    ".section-heading, .about-grid, .timeline-item, " +
+    ".achievement-card, .project-row, .goal-card, .contact-inner"
+  );
+
+  if (reducedMotion || !("IntersectionObserver" in window)) {
+    revealItems.forEach(item => item.classList.add("is-visible"));
+  } else {
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    revealItems.forEach(item => {
+      item.classList.add("js-reveal");
+      observer.observe(item);
+    });
+  }
+
+  /* 2. Clickable achievement cards and accessible popup */
+  const cards = document.querySelectorAll(".achievement-card");
+  const dialog = document.createElement("dialog");
+  dialog.className = "achievement-dialog";
+  dialog.setAttribute("aria-labelledby", "achievement-dialog-title");
+
+  const label = document.createElement("div");
+  label.className = "dialog-label";
+  label.textContent = "ACHIEVEMENT DETAILS";
+
+  const title = document.createElement("h2");
+  title.id = "achievement-dialog-title";
+
+  const description = document.createElement("p");
+  const close = document.createElement("button");
+  close.type = "button";
+  close.textContent = "Close";
+
+  dialog.append(label, title, description, close);
+  document.body.appendChild(dialog);
+
+  function openAchievement(card) {
+    const heading = card.querySelector("h3");
+    const paragraph = card.querySelector("p");
+    if (!heading || !paragraph) return;
+
+    title.textContent = heading.textContent;
+    description.textContent = paragraph.textContent;
+
+    cards.forEach(item => {
+      item.classList.toggle("is-selected", item === card);
+    });
+
+    if (typeof dialog.showModal === "function") {
+      dialog.showModal();
+    } else {
+      dialog.setAttribute("open", "");
+    }
+  }
+
+  function closeAchievement() {
+    if (typeof dialog.close === "function" && dialog.open) {
+      dialog.close();
+    } else {
+      dialog.removeAttribute("open");
+    }
+    cards.forEach(item => item.classList.remove("is-selected"));
+  }
+
+  cards.forEach(card => {
+    card.setAttribute("tabindex", "0");
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-haspopup", "dialog");
+    card.setAttribute("aria-label", "View achievement details");
+
+    card.addEventListener("click", () => openAchievement(card));
+    card.addEventListener("keydown", event => {
+      if (event.target !== card) return;
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openAchievement(card);
+      }
+    });
+  });
+
+  close.addEventListener("click", closeAchievement);
+
+  dialog.addEventListener("click", event => {
+    if (event.target === dialog) closeAchievement();
+  });
+
+  dialog.addEventListener("close", () => {
+    cards.forEach(item => item.classList.remove("is-selected"));
+  });
+
+  /* 3. Expand and collapse academic timeline entries */
+  document.querySelectorAll(".timeline-item").forEach((item, index) => {
+    item.setAttribute("tabindex", "0");
+    item.setAttribute("role", "button");
+
+    const initiallyOpen = index === 0;
+    item.classList.toggle("is-expanded", initiallyOpen);
+    item.setAttribute("aria-expanded", String(initiallyOpen));
+
+    const toggleItem = () => {
+      const expanded = item.classList.toggle("is-expanded");
+      item.setAttribute("aria-expanded", String(expanded));
+    };
+
+    item.addEventListener("click", toggleItem);
+    item.addEventListener("keydown", event => {
+      if (event.target !== item) return;
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggleItem();
+      }
+    });
+  });
+
+  /* 4. Add a one-click copy-email button */
+  const emailButton = document.querySelector("[data-email-button]");
+  const email = emailButton?.getAttribute("href") || "";
+  const emailAddress = email.startsWith("mailto:")
+    ? email.slice(7).split("?")[0]
+    : "";
+
+  if (emailAddress && !emailAddress.includes("YOUR_EMAIL")) {
+    const copyButton = document.createElement("button");
+    copyButton.type = "button";
+    copyButton.className = "copy-email-button";
+    copyButton.textContent = "Copy email address";
+    copyButton.setAttribute("aria-live", "polite");
+
+    emailButton.insertAdjacentElement("afterend", copyButton);
+
+    copyButton.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(emailAddress);
+        copyButton.textContent = "Email copied!";
+      } catch {
+        copyButton.textContent = emailAddress;
+      }
+    });
+  }
+})();
+
