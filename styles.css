@@ -171,3 +171,158 @@ h2 { font: 500 clamp(2.25rem, 4.2vw, 3.65rem)/1.12 var(--display); letter-spacin
   }
 }
 
+
+
+/* === Interactive portfolio upgrade === */
+
+/* Smooth reveal when scrolling */
+.js-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .55s ease, transform .55s ease;
+}
+
+.js-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Interactive achievement cards */
+.achievement-card {
+  cursor: pointer;
+}
+
+.achievement-card:focus-visible,
+.timeline-item:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 5px;
+}
+
+.achievement-card.is-selected {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px #c8a97822;
+}
+
+/* Expandable academic timeline */
+.timeline-item {
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background .2s ease, padding .2s ease;
+}
+
+.timeline-item:hover,
+.timeline-item.is-expanded {
+  background: #c8a97808;
+}
+
+.timeline-item .timeline-copy p {
+  transition: opacity .2s ease;
+}
+
+.timeline-item:not(.is-expanded) .timeline-copy p {
+  display: none;
+}
+
+.timeline-item.is-expanded .timeline-copy p {
+  display: block;
+}
+
+/* Copy-email interaction */
+.copy-email-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 10px 14px;
+  border: 1px solid #746044;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--gold-light);
+  cursor: pointer;
+  font: 500 .72rem var(--mono);
+  transition: background .2s ease, color .2s ease;
+}
+
+.copy-email-button:hover {
+  background: #c8a97818;
+}
+
+.copy-email-button:focus-visible,
+.achievement-dialog button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+
+/* Achievement popup */
+.achievement-dialog {
+  width: min(520px, calc(100% - 32px));
+  max-height: 80vh;
+  overflow: auto;
+  padding: 30px;
+  border: 1px solid #746044;
+  border-radius: 4px;
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: 0 24px 100px #000a;
+}
+
+.achievement-dialog::backdrop {
+  background: #050609d9;
+  backdrop-filter: blur(5px);
+}
+
+.achievement-dialog .dialog-label {
+  color: var(--gold);
+  font: .68rem var(--mono);
+  letter-spacing: .12em;
+}
+
+.achievement-dialog h2 {
+  margin: 18px 0 14px;
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+}
+
+.achievement-dialog p {
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.achievement-dialog button {
+  margin-top: 12px;
+  padding: 10px 15px;
+  border: 1px solid #746044;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--gold-light);
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .achievement-dialog {
+    padding: 22px;
+  }
+
+  .copy-email-button {
+    min-height: 44px;
+  }
+}
+
+/* Respect visitors who prefer less animation */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .js-reveal,
+  .timeline-item,
+  .achievement-card,
+  .copy-email-button {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .js-reveal {
+    opacity: 1;
+  }
+}
