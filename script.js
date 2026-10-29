@@ -236,7 +236,7 @@
 
 /* === Reading progress and active navigation === */
 (() => {
-  const navLinks = [...document.querySelectorAll('a[href^="#"]')]
+  const navLinks = [...document.querySelectorAll('.nav-links a[href^="#"]')]
     .map(link => ({
       link,
       section: document.getElementById(
