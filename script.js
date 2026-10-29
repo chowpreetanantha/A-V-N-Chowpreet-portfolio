@@ -234,3 +234,56 @@
   }
 })();
 
+/* === Reading progress and active navigation === */
+(() => {
+  const navLinks = [...document.querySelectorAll('a[href^="#"]')]
+    .map(link => ({
+      link,
+      section: document.getElementById(
+        link.getAttribute("href").slice(1)
+      )
+    }))
+    .filter(item => item.section);
+
+  function updatePagePosition() {
+    // Update the gold reading-progress bar
+    const page = document.documentElement;
+    const scrollable = page.scrollHeight - window.innerHeight;
+    const progress = scrollable > 0
+      ? (page.scrollTop / scrollable) * 100
+      : 0;
+
+    document.body.style.setProperty(
+      "--scroll-progress",
+      `${progress}%`
+    );
+
+    // Highlight the section currently being viewed
+    let current = navLinks[0];
+
+    navLinks.forEach(item => {
+      if (item.section.getBoundingClientRect().top <= 160) {
+        current = item;
+      }
+    });
+
+    navLinks.forEach(item => {
+      const active = item === current;
+      item.link.classList.toggle("is-active", active);
+
+      if (active) {
+        item.link.setAttribute("aria-current", "location");
+      } else {
+        item.link.removeAttribute("aria-current");
+      }
+    });
+  }
+
+  window.addEventListener("scroll", updatePagePosition, {
+    passive: true
+  });
+
+  window.addEventListener("resize", updatePagePosition);
+
+  updatePagePosition();
+})();
